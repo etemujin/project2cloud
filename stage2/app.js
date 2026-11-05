@@ -18,6 +18,7 @@ async function loadInsights() {
     const data = await apiGet("/insights");
     renderBarChart(data.average_macros);
     renderPieChart(data.summary.diet_counts);
+    renderHeatmap(data.correlation);
   } catch (error) {
     console.error(error);
   }

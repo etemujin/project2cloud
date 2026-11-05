@@ -89,3 +89,59 @@ function renderPieChart(dietCounts) {
     }
   });
 }
+const MACRO_NAMES = ["Protein(g)", "Carbs(g)", "Fat(g)"];
+
+function shortName(column) {
+  return column.replace("(g)", "");
+}
+
+function correlationColor(value) {
+  if (value === null) {
+    return "#e5e7eb";
+  }
+  const strength = Math.abs(value);
+  if (value >= 0) {
+    return "rgba(37, 99, 235, " + strength + ")";
+  }
+  return "rgba(220, 38, 38, " + strength + ")";
+}
+
+function makeCell(text, className) {
+  const cell = document.createElement("div");
+  cell.className = className;
+  cell.textContent = text;
+  return cell;
+}
+
+function renderHeatmap(correlation) {
+  const container = document.getElementById("heatmap");
+  container.innerHTML = "";
+
+  const grid = document.createElement("div");
+  grid.className = "heatmap-grid";
+
+  grid.appendChild(makeCell("", "heatmap-label"));
+  for (const column of MACRO_NAMES) {
+    grid.appendChild(makeCell(shortName(column), "heatmap-label"));
+  }
+
+  for (const row of MACRO_NAMES) {
+    grid.appendChild(makeCell(shortName(row), "heatmap-label"));
+
+    for (const column of MACRO_NAMES) {
+      const value = correlation[row][column];
+      const text = value === null ? "n/a" : value.toFixed(2);
+      const cell = makeCell(text, "heatmap-cell");
+
+      cell.style.backgroundColor = correlationColor(value);
+      if (value !== null && Math.abs(value) > 0.5) {
+        cell.style.color = "white";
+      }
+      cell.title = shortName(row) + " vs " + shortName(column) + ": " + text;
+
+      grid.appendChild(cell);
+    }
+  }
+
+  container.appendChild(grid);
+}

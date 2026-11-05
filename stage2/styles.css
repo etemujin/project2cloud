@@ -232,3 +232,31 @@ th {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* ---------- Correlation heatmap ---------- */
+.heatmap-grid {
+  display: grid;
+  grid-template-columns: auto repeat(3, 1fr);
+  grid-template-rows: auto repeat(3, 1fr);
+  gap: 4px;
+  height: 100%;
+}
+
+.heatmap-label,
+.heatmap-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.heatmap-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: 2px 4px;
+}
+
+.heatmap-cell {
+  border-radius: 4px;
+  font-weight: 600;
+}
