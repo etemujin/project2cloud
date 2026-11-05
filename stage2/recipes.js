@@ -26,6 +26,7 @@ async function loadRecipes(page = 1) {
     info.textContent = describeResults(data);
   } catch (error) {
     info.textContent = "Could not load recipes: " + error.message;
+    showError(error.message);
     console.error(error);
   }
 }
@@ -36,7 +37,8 @@ function describeResults(data) {
   }
   const first = (data.page - 1) * data.limit + 1;
   const last = first + data.count - 1;
-  return "Showing " + first + "–" + last + " of " + data.total.toLocaleString() + " recipes";
+  return "Showing " + first.toLocaleString() + "–" + last.toLocaleString() +
+    " of " + data.total.toLocaleString() + " recipes";
 }
 
 function renderRecipeRows(recipes) {

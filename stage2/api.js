@@ -29,6 +29,12 @@ async function apiGet(path, params = {}) {
     throw new Error(data.error || "Request failed with status " + response.status);
   }
 
+  hideError();
+
+  if (data.metadata && typeof data.metadata.execution_time_seconds === "number") {
+    showExecutionTime(path, data.metadata.execution_time_seconds, roundTripMs);
+  }
+
   if (data.metadata && typeof data.metadata.execution_time_seconds === "number") {
     showExecutionTime(data.metadata.execution_time_seconds, roundTripMs);
   }
@@ -36,8 +42,18 @@ async function apiGet(path, params = {}) {
   return data;
 }
 
-function showExecutionTime(seconds, roundTripMs) {
+function showExecutionTime(path, seconds, roundTripMs) {
   const functionMs = Math.round(seconds * 1000);
   document.getElementById("executionTime").textContent =
-    "Execution time: " + functionMs + " ms (round trip " + roundTripMs + " ms)";
+    "Execution time (" + path + "): " + functionMs + " ms (round trip " + roundTripMs + " ms)";
+}
+
+function showError(message) {
+  const banner = document.getElementById("errorBanner");
+  banner.textContent = "⚠ " + message;
+  banner.hidden = false;
+}
+
+function hideError() {
+  document.getElementById("errorBanner").hidden = true;
 }

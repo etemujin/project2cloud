@@ -20,6 +20,7 @@ async function loadInsights() {
     renderPieChart(data.summary.diet_counts);
     renderHeatmap(data.correlation);
   } catch (error) {
+    showError(error.message);
     console.error(error);
   }
 }
@@ -31,25 +32,46 @@ async function loadClusters() {
     const data = await apiGet("/clusters", { k: CLUSTER_K });
     renderScatterChart(data);
   } catch (error) {
+    showError(error.message);
     console.error(error);
   }
 }
 
+async function withLoading(button, task) {
+  const originalText = button.textContent;
+  button.disabled = true;
+  button.textContent = "Loading…";
+  try {
+    await task();
+  } finally {
+    button.disabled = false;
+    button.textContent = originalText;
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("insightsBtn").addEventListener("click", loadInsights);
-  document.getElementById("clustersBtn").addEventListener("click", loadClusters);
-  document.getElementById("recipesBtn").addEventListener("click", () => loadRecipes(1));
+  const insightsBtn = document.getElementById("insightsBtn");
+  const clustersBtn = document.getElementById("clustersBtn");
+  const recipesBtn = document.getElementById("recipesBtn");
+
+  const refreshInsights = () => withLoading(insightsBtn, loadInsights);
+  const refreshClusters = () => withLoading(clustersBtn, loadClusters);
+  const refreshRecipes = () => withLoading(recipesBtn, () => loadRecipes(1));
+
+  insightsBtn.addEventListener("click", refreshInsights);
+  clustersBtn.addEventListener("click", refreshClusters);
+  recipesBtn.addEventListener("click", refreshRecipes);
   document.getElementById("prevBtn").addEventListener("click", () => loadRecipes(currentPage - 1));
   document.getElementById("nextBtn").addEventListener("click", () => loadRecipes(currentPage + 1));
-  document.getElementById("dietSelect").addEventListener("change", () => loadRecipes(1));
+  document.getElementById("dietSelect").addEventListener("change", refreshRecipes);
   document.getElementById("searchInput").addEventListener("keydown", event => {
     if (event.key === "Enter") {
-      loadRecipes(1);
+      refreshRecipes();
     }
   });
 
   checkBackend();
-  loadInsights();
-  loadClusters();
-  loadRecipes(1);
+  refreshInsights();
+  refreshClusters();
+  refreshRecipes();
 });
