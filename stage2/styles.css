@@ -65,6 +65,14 @@ body {
   font-size: 0.9rem;
 }
 
+.badge-ok {
+  background: var(--green);
+}
+
+.badge-error {
+  background: var(--red);
+}
+
 .error-banner {
   background: #fee2e2;
   color: var(--red);
