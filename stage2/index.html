@@ -2,21 +2,113 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Stage 2 setup check</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nutritional Insights</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>Setup check</h1>
-  <p id="result">Calling the backend...</p>
 
-  <script>
-    fetch("http://localhost:7071/api/health")
-      .then(response => response.json())
-      .then(data => {
-        document.getElementById("result").textContent = "Backend says: " + data.status;
-      })
-      .catch(() => {
-        document.getElementById("result").textContent = "Could not reach the backend.";
-      });
-  </script>
+  <header class="site-header">
+    <h1>Nutritional Insights</h1>
+    <div class="status-bar">
+      <span id="connectionStatus" class="badge">Checking backend...</span>
+      <span id="executionTime" class="badge">Execution time: --</span>
+    </div>
+  </header>
+
+  <div id="errorBanner" class="error-banner" hidden></div>
+
+  <main class="container">
+
+    <section>
+      <h2>Explore Nutritional Insights</h2>
+      <div class="chart-grid">
+        <div class="card">
+          <h3>Bar Chart</h3>
+          <p class="hint">Average macronutrient content by diet type.</p>
+          <div class="chart-box"><canvas id="barChart"></canvas></div>
+        </div>
+
+        <div class="card">
+          <h3>Scatter Plot</h3>
+          <p class="hint">Nutrient relationships (protein vs carbs), coloured by cluster.</p>
+          <div class="chart-box"><canvas id="scatterPlot"></canvas></div>
+        </div>
+
+        <div class="card">
+          <h3>Heatmap</h3>
+          <p class="hint">Nutrient correlations.</p>
+          <div id="heatmap" class="chart-box"></div>
+        </div>
+
+        <div class="card">
+          <h3>Pie Chart</h3>
+          <p class="hint">Recipe distribution by diet type.</p>
+          <div class="chart-box"><canvas id="pieChart"></canvas></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Filters and Data Interaction</h2>
+      <div class="controls">
+        <input type="text" id="searchInput" placeholder="Search by Diet Type" aria-label="Search recipes">
+        <select id="dietSelect" aria-label="Filter by diet type">
+          <option value="all">All Diet Types</option>
+          <option value="dash">Dash</option>
+          <option value="keto">Keto</option>
+          <option value="mediterranean">Mediterranean</option>
+          <option value="paleo">Paleo</option>
+          <option value="vegan">Vegan</option>
+        </select>
+      </div>
+    </section>
+
+    <section>
+      <h2>API Data Interaction</h2>
+      <div class="controls">
+        <button id="insightsBtn" class="btn btn-blue">Get Nutritional Insights</button>
+        <button id="recipesBtn" class="btn btn-green">Get Recipes</button>
+        <button id="clustersBtn" class="btn btn-purple">Get Clusters</button>
+      </div>
+    </section>
+
+    <section>
+      <h2>Recipes</h2>
+      <p id="recipesInfo" class="hint">Click "Get Recipes" to load recipes.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Recipe</th>
+              <th>Diet</th>
+              <th>Cuisine</th>
+              <th>Protein (g)</th>
+              <th>Carbs (g)</th>
+              <th>Fat (g)</th>
+            </tr>
+          </thead>
+          <tbody id="recipesBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>Pagination</h2>
+      <div class="pagination">
+        <button id="prevBtn" class="page-btn">Previous</button>
+        <span id="pageNumbers" class="page-numbers">
+          <button class="page-btn active">1</button>
+        </span>
+        <button id="nextBtn" class="page-btn">Next</button>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 Nutritional Insights. All Rights Reserved.</p>
+  </footer>
+
 </body>
 </html>
