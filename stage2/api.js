@@ -35,10 +35,6 @@ async function apiGet(path, params = {}) {
     showExecutionTime(path, data.metadata.execution_time_seconds, roundTripMs);
   }
 
-  if (data.metadata && typeof data.metadata.execution_time_seconds === "number") {
-    showExecutionTime(data.metadata.execution_time_seconds, roundTripMs);
-  }
-
   return data;
 }
 
