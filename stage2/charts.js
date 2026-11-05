@@ -52,3 +52,40 @@ function renderBarChart(averageMacros) {
     }
   });
 }
+const DIET_COLORS = ["#0d9488", "#db2777", "#4f46e5", "#ea580c", "#65a30d"];
+
+let pieChart = null;
+
+function renderPieChart(dietCounts) {
+  const diets = Object.keys(dietCounts).sort();
+  const labels = diets.map(diet => capitalize(diet));
+  const counts = diets.map(diet => dietCounts[diet]);
+  const total = counts.reduce((sum, count) => sum + count, 0);
+
+  if (pieChart) {
+    pieChart.destroy();
+  }
+
+  pieChart = new Chart(document.getElementById("pieChart"), {
+    type: "pie",
+    data: {
+      labels: labels,
+      datasets: [{ data: counts, backgroundColor: DIET_COLORS }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: "right", labels: { boxWidth: 12 } },
+        tooltip: {
+          callbacks: {
+            label: context => {
+              const percent = (context.parsed / total * 100).toFixed(1);
+              return " " + context.parsed + " recipes (" + percent + "%)";
+            }
+          }
+        }
+      }
+    }
+  });
+}

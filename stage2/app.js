@@ -17,6 +17,7 @@ async function loadInsights() {
   try {
     const data = await apiGet("/insights");
     renderBarChart(data.average_macros);
+    renderPieChart(data.summary.diet_counts);
   } catch (error) {
     console.error(error);
   }
