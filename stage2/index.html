@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Stage 2 setup check</title>
+</head>
+<body>
+  <h1>Setup check</h1>
+  <p id="result">Calling the backend...</p>
+
+  <script>
+    fetch("http://localhost:7071/api/health")
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById("result").textContent = "Backend says: " + data.status;
+      })
+      .catch(() => {
+        document.getElementById("result").textContent = "Could not reach the backend.";
+      });
+  </script>
+</body>
+</html>
