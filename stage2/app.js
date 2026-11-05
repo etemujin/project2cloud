@@ -13,4 +13,17 @@ async function checkBackend() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", checkBackend);
+async function loadInsights() {
+  try {
+    const data = await apiGet("/insights");
+    renderBarChart(data.average_macros);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("insightsBtn").addEventListener("click", loadInsights);
+  checkBackend();
+  loadInsights();
+});
