@@ -38,7 +38,18 @@ async function loadClusters() {
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("insightsBtn").addEventListener("click", loadInsights);
   document.getElementById("clustersBtn").addEventListener("click", loadClusters);
+  document.getElementById("recipesBtn").addEventListener("click", () => loadRecipes(1));
+  document.getElementById("prevBtn").addEventListener("click", () => loadRecipes(currentPage - 1));
+  document.getElementById("nextBtn").addEventListener("click", () => loadRecipes(currentPage + 1));
+  document.getElementById("dietSelect").addEventListener("change", () => loadRecipes(1));
+  document.getElementById("searchInput").addEventListener("keydown", event => {
+    if (event.key === "Enter") {
+      loadRecipes(1);
+    }
+  });
+
   checkBackend();
   loadInsights();
   loadClusters();
+  loadRecipes(1);
 });
