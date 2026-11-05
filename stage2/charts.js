@@ -145,3 +145,72 @@ function renderHeatmap(correlation) {
 
   container.appendChild(grid);
 }
+const CLUSTER_COLORS = ["#2563eb", "#ea580c", "#16a34a", "#9333ea", "#db2777"];
+const SCATTER_SAMPLE_STEP = 4;
+
+let scatterChart = null;
+
+function renderScatterChart(clusterData) {
+  const sample = clusterData.points.filter((point, index) => index % SCATTER_SAMPLE_STEP === 0);
+
+  const datasets = clusterData.centroids.map(centroid => {
+    const id = centroid.cluster;
+    const count = clusterData.cluster_counts[String(id)];
+    return {
+      label: "Cluster " + id + " (" + count.toLocaleString() + " recipes)",
+      data: sample
+        .filter(point => point.cluster === id)
+        .map(point => ({
+          x: point["Protein(g)"],
+          y: point["Carbs(g)"],
+          name: point["Recipe_name"]
+        })),
+      backgroundColor: CLUSTER_COLORS[id % CLUSTER_COLORS.length],
+      pointRadius: 2
+    };
+  });
+
+  datasets.push({
+    label: "Centroids",
+    data: clusterData.centroids.map(centroid => ({
+      x: centroid["Protein(g)"],
+      y: centroid["Carbs(g)"],
+      name: "Centre of cluster " + centroid.cluster
+    })),
+    pointStyle: "crossRot",
+    pointRadius: 9,
+    borderWidth: 3,
+    borderColor: "#111827",
+    backgroundColor: "#111827"
+  });
+
+  if (scatterChart) {
+    scatterChart.destroy();
+  }
+
+  scatterChart = new Chart(document.getElementById("scatterPlot"), {
+    type: "scatter",
+    data: { datasets: datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: false,
+      plugins: {
+        legend: { position: "bottom", labels: { boxWidth: 10, font: { size: 10 } } },
+        tooltip: {
+          callbacks: {
+            label: context => {
+              const point = context.raw;
+              return point.name + ": protein " + Math.round(point.x) + " g, carbs " +
+                Math.round(point.y) + " g";
+            }
+          }
+        }
+      },
+      scales: {
+        x: { min: 0, max: 600, title: { display: true, text: "Protein (g)" } },
+        y: { min: 0, max: 1000, title: { display: true, text: "Carbs (g)" } }
+      }
+    }
+  });
+}

@@ -24,8 +24,21 @@ async function loadInsights() {
   }
 }
 
+const CLUSTER_K = 3;
+
+async function loadClusters() {
+  try {
+    const data = await apiGet("/clusters", { k: CLUSTER_K });
+    renderScatterChart(data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("insightsBtn").addEventListener("click", loadInsights);
+  document.getElementById("clustersBtn").addEventListener("click", loadClusters);
   checkBackend();
   loadInsights();
+  loadClusters();
 });
