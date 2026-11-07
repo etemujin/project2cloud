@@ -10,6 +10,7 @@ CORS is configured at the Function App host level (local.settings.json), so this
 module deliberately does not emit Access-Control-Allow-* headers itself --
 doing both produces duplicate headers, which browsers reject.
 """
+import io
 import json
 import logging
 import os
@@ -40,8 +41,36 @@ _cache_lock = threading.Lock()
 # Helpers
 # ---------------------------------------------------------------------------
 
+def _load_from_blob():
+    """Load the CSV from Azure Blob Storage; cache keyed by the blob's ETag."""
+    from azure.storage.blob import BlobServiceClient
+
+    service = BlobServiceClient.from_connection_string(
+        os.environ["STORAGE_CONNECTION_STRING"])
+    blob = service.get_blob_client(
+        container=os.environ.get("BLOB_CONTAINER", "datasets"),
+        blob=os.environ.get("BLOB_NAME", "All_Diets.csv"))
+    key = ("blob", blob.get_blob_properties().etag)
+    with _cache_lock:
+        if _cache["etag"] == key and _cache["frame"] is not None:
+            return _cache["frame"], True
+        frame = clean_data(pd.read_csv(io.BytesIO(blob.download_blob().readall())))
+        _cache.update(etag=key, frame=frame)
+        return frame, False
+
+
+def _source_name():
+    return "Azure Blob Storage" if _use_blob() else "Local CSV"
+
+
+def _use_blob():
+    return os.environ.get("USE_BLOB", "").lower() == "true"
+
+
 def _load_dataset():
-    """Load a local CSV, refreshing the cache when the file changes."""
+    """Load the dataset from Blob Storage (USE_BLOB=true) or a local CSV."""
+    if _use_blob():
+        return _load_from_blob()
     path = Path(os.environ.get(
         "DATASET_PATH", str(Path(__file__).parent / "data" / "All_Diets.csv")
     )).resolve()
@@ -162,7 +191,7 @@ def insights(req: func.HttpRequest) -> func.HttpResponse:
             "summary": summary,
             "metadata": {
                 "execution_time_seconds": round(time.time() - start, 3),
-                "source": "Local CSV",
+                "source": _source_name(),
                 "dataset": "All_Diets.csv",
                 "dataset_from_cache": cache_hit,
             },
@@ -224,7 +253,7 @@ def recipes(req: func.HttpRequest) -> func.HttpResponse:
             "search": search,
             "metadata": {
                 "execution_time_seconds": round(time.time() - start, 3),
-                "source": "Local CSV",
+                "source": _source_name(),
                 "dataset": "All_Diets.csv",
                 "dataset_from_cache": cache_hit,
             },
@@ -251,7 +280,7 @@ def clusters(req: func.HttpRequest) -> func.HttpResponse:
         result = cluster_recipes(df, k=k)
         result["metadata"] = {
             "execution_time_seconds": round(time.time() - start, 3),
-            "source": "Local CSV",
+            "source": _source_name(),
             "dataset": "All_Diets.csv",
             "dataset_from_cache": cache_hit,
         }
