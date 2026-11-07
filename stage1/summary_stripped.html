@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project 2 &middot; Stage 1 Backend Summary</title>
+<style>
+:root{--ink:#172e40;--muted:#526675;--teal:#007f79;--line:#d9e4e8}
+*{box-sizing:border-box}body{margin:0;background:#eef3f5;color:var(--ink);font:16px/1.75 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+main{max-width:1080px;margin:35px auto;background:white;box-shadow:0 12px 50px #18374712}
+header{background:#153449;color:white;padding:52px 60px}header p{color:#c7dce6;max-width:780px}.eyebrow{font-size:12px;letter-spacing:3px;color:#84ded2}h1{font-size:36px;line-height:1.3;margin:14px 0}h2{font-size:24px;margin:0 0 20px}h3{font-size:18px;margin:22px 0 10px}p{margin:12px 0}section{padding:32px 60px;border-bottom:1px solid var(--line)}a{color:var(--teal)}.meta{font-size:13px}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.card{padding:18px;background:#f0f7f7;border-top:3px solid var(--teal)}.number{display:block;font-size:30px;font-weight:700;line-height:1.3}.label{font-size:13px;color:var(--muted)}.note{background:#fff6e6;border-left:4px solid #c48b26;padding:14px 20px;margin-top:20px;font-size:14px}table{width:100%;border-collapse:collapse;font-size:14px}th{text-align:left;background:#f0f5f7}td,th{padding:11px 13px;border-bottom:1px solid var(--line);vertical-align:top}code{background:#eef3f5;padding:2px 5px;border-radius:3px}pre{background:#122c3c;color:#e4f2f6;padding:20px;overflow-x:auto;font:12px/1.65 ui-monospace,SFMono-Regular,monospace;white-space:pre-wrap;overflow-wrap:anywhere}summary{cursor:pointer;padding:14px 0;font-weight:600}details{border-bottom:1px solid var(--line)}.flow{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.flow span{padding:12px 18px;border:1px solid #b8d8d5;background:#f0f9f8;border-radius:5px}.bar{display:block;height:10px;background:#14978c;border-radius:4px;margin-top:8px}.two{display:grid;grid-template-columns:1fr 1fr;gap:26px}.tag{color:var(--teal);font-weight:600}.muted{color:var(--muted);font-size:14px}footer{padding:25px 60px;font-size:12px;color:var(--muted)}li{margin:7px 0}.tools{max-width:1080px;margin:20px auto;text-align:right}button{background:var(--teal);border:0;color:white;padding:10px 18px;border-radius:5px;cursor:pointer}
+@media(max-width:700px){main{margin:0}header,section,footer{padding:26px 22px}h1{font-size:29px}.cards,.two{grid-template-columns:1fr 1fr}table{font-size:12px}td,th{padding:8px 5px}.tools{padding-right:15px}}
+@media print{@page{size:A4;margin:14mm}body{background:white;font-size:11px}main{margin:0;box-shadow:none;max-width:none}.tools{display:none}header{padding:24px;background:#153449!important;print-color-adjust:exact}h1{font-size:26px}section{padding:20px 0}h2{font-size:19px}h2,h3{break-after:avoid}.card,tr,.note{break-inside:avoid}pre{font-size:9px;background:#f4f6f7;color:#172e40}details{display:block}footer{padding:15px 0}table{font-size:10px}.cards{gap:8px}.number{font-size:24px}}
+figure{margin:25px 0;break-inside:avoid}figure img{width:100%;height:auto;border:1px solid #d9e4e8}figcaption{font-size:12px;color:#526675;margin-top:8px} </style></head><body><div class="tools"><button onclick="document.querySelectorAll('details').forEach(d=>d.open=true);window.print()">Print / Save as PDF</button></div><main>
+<header><div class="eyebrow">CPSY 300 &middot; CLOUD COMPUTING &middot; PROJECT 2</div><h1>Stage 1 Backend Summary</h1><p>Local Data Processing &amp; Nutritional Insights API</p><div class="meta">Scope: Person 1 &middot; Stage 1 &nbsp;|&nbsp; Verified: 2026-11-04<br>This page summarises the Stage 1 implementation and its evidence. Person numbering follows the team's division of work.</div></header>
+<section><h2>01 / Delivery at a Glance</h2><div class="cards"><div class="card"><span class="number">4</span><span class="label">GET API endpoints</span></div><div class="card"><span class="number">7,806</span><span class="label">recipes in the dataset</span></div><div class="card"><span class="number">44</span><span class="label">automated tests passing</span></div><div class="card"><span class="number">5</span><span class="label">diet types</span></div></div><p>Stage 1 of <code>Project2/division.md</code> is delivered as a self-contained folder. It reuses the cleaning, aggregation and test foundation of the existing backend, and adds local CSV loading, text search, a correlation matrix and a k-means implementation written from scratch with NumPy, behind an API contract the front end can build against.</p><div class="note"><strong>Status:</strong> Stage 1 is complete and evidenced. On Python 3.11 all 44 tests pass and flake8 reports nothing; <code>func start</code> from Azure Functions Core Tools 4.16.0 registers all four routes; ten real HTTP cases pass, including the 400 / 404 paths and the local CORS response header; four browser screenshots and three terminal screenshots are archived in <code>docs/screenshots/</code>. Stage 1 involves no cloud deployment &mdash; the group's Azure release, report and video belong to Stages 2 and 3.</div></section>
+<section><h2>02 / Stage 1 Requirements Checklist</h2><table><thead><tr><th>Requirement from the division of work</th><th>Where it lives and how it is evidenced</th><th>Status</th></tr></thead><tbody><tr><td>Python project, dependencies, host configuration</td><td>requirements.txt, host.json, local settings template</td><td class="tag">Done</td></tr><tr><td>Load and clean the local CSV</td><td>function_app.py, nutrition.py, data/All_Diets.csv</td><td class="tag">Verified</td></tr><tr><td>Health / Insights / Recipes / Clusters</td><td>4 GET routes; every call over the full dataset returns 200</td><td class="tag">Verified</td></tr><tr><td>Endpoint tests, flake8, API documentation</td><td>tests/, README.md, docs/verification.txt</td><td class="tag">Done</td></tr><tr><td>Run locally, screenshots, merge to main</td><td>func start 4.16.0 registers 4 routes; verify_http.py runs 10 real HTTP cases; 7 images in docs/screenshots/</td><td class="tag">Verified</td></tr></tbody></table><p class="muted">Checked against the instructor's phase2-requirements.docx: it asks for cloud deployment, at least three visualizations, interactive controls, execution timing and front-end/back-end integration. It does not specifically require k-means or four APIs &mdash; clustering, search and the correlation matrix come from Stage 1 of the team's own division.md.</p></section>
+<section><h2>03 / Structure and Data Processing</h2><div class="flow"><span>Local All_Diets.csv</span>&rarr;<span>Pandas cleaning</span>&rarr;<span>Statistics / NumPy clustering</span>&rarr;<span>Azure Functions JSON</span></div><div class="two"><div><h3>Cleaning rules</h3><ul><li>Strip whitespace from column names and text; normalise diet and cuisine casing.</li><li>Missing categories become unknown; a missing recipe name becomes Unnamed recipe.</li><li>Invalid, missing, negative and infinite nutrient values are filled with the column's valid mean.</li><li>Empty data, a missing required column, or a column with no valid value at all is rejected.</li></ul></div><div><h3>Project layout</h3><pre>stage1/
+&#9500;&#9472;&#9472; function_app.py
+&#9500;&#9472;&#9472; nutrition.py / clustering.py
+&#9500;&#9472;&#9472; host.json / requirements*.txt
+&#9500;&#9472;&#9472; local.settings.json.example
+&#9500;&#9472;&#9472; verify_http.py
+&#9500;&#9472;&#9472; data/All_Diets.csv
+&#9500;&#9472;&#9472; tests/  (3 test files)
+&#9500;&#9472;&#9472; docs/   (measured results, verification record, screenshots)
+&#9500;&#9472;&#9472; README.md
+&#9492;&#9472;&#9472; summary.html</pre></div></div><p class="muted">Stage 1 does not use Blob Storage. The cache is keyed on file path, modification time and size; Stage 3 switches the loader to Azure Blob.</p></section>
+<section><h2>04 / API Contract and Front-End Hand-Off</h2><p>Base URL: <code>http://localhost:7071/api</code>. Every endpoint returns JSON, and each data endpoint reports its execution time, source and cache state.</p><table><thead><tr><th>GET route</th><th>Input</th><th>Main output and purpose</th></tr></thead><tbody><tr><td>/health</td><td>none</td><td>Service status; touches no data, so it works as a liveness check.</td></tr><tr><td>/insights</td><td>none</td><td>average_macros &rarr; bar chart; summary.diet_counts &rarr; pie chart; correlation &rarr; heatmap.</td></tr><tr><td>/recipes</td><td>diet_type, search, page, limit</td><td>Recipe rows plus paging fields. search matches recipe name, diet type and cuisine, and combines with the filter.</td></tr><tr><td>/clusters</td><td>k, default 3, range 1&ndash;10</td><td>points, centroids, cluster_counts &rarr; scatter chart coloured by cluster.</td></tr></tbody></table><p>Paging defaults to 50 rows and is capped at 500; pages are 1-based and a page past the end returns the last page. Invalid parameters return 400 and an unknown diet type returns 404. A search with no match returns an empty list. Internal errors return a generic error JSON.</p><p class="muted">The existing frontend/ still targets the earlier three-endpoint version; the new controls and charts are Person 2's work. The CORS template allows localhost:5500 and 127.0.0.1:5500.</p></section>
+<section><h2>05 / Measured Results on the Full Dataset</h2><p>The figures below come from the cleaned local CSV. All 7,806 recipes take part in the statistics and the clustering.</p><h3>Recipes per diet type</h3><table><thead><tr><th>Diet type</th><th>Recipes</th><th>Relative size</th></tr></thead><tbody><tr><td>mediterranean</td><td>1,753</td><td><span class="bar" style="width:100.0%"></span></td></tr><tr><td>dash</td><td>1,745</td><td><span class="bar" style="width:99.5%"></span></td></tr><tr><td>vegan</td><td>1,522</td><td><span class="bar" style="width:86.8%"></span></td></tr><tr><td>keto</td><td>1,512</td><td><span class="bar" style="width:86.3%"></span></td></tr><tr><td>paleo</td><td>1,274</td><td><span class="bar" style="width:72.7%"></span></td></tr></tbody></table><h3>Average macros (grams)</h3><table><thead><tr><th>Diet</th><th>Protein</th><th>Carbs</th><th>Fat</th></tr></thead><tbody><tr><td>dash</td><td>69.28</td><td>160.54</td><td>101.15</td></tr><tr><td>keto</td><td>101.27</td><td>57.97</td><td>153.12</td></tr><tr><td>mediterranean</td><td>101.11</td><td>152.91</td><td>101.42</td></tr><tr><td>paleo</td><td>88.67</td><td>129.55</td><td>135.67</td></tr><tr><td>vegan</td><td>56.16</td><td>254.0</td><td>103.3</td></tr></tbody></table><h3>NumPy k-means</h3><p>Protein, carbohydrate and fat are the three features. They are z-score standardized first so that no unit scale dominates the distance. The random seed is fixed at 42 and the centroids start from distinct sample vectors; the loop then alternates nearest-centroid assignment and cluster-mean updates for at most 100 iterations. A constant feature uses a scale of 1, and an empty cluster keeps its previous centroid, so no NaN can appear.</p><p><strong>Measured grouping at k = 3:</strong> cluster 0 holds 1,205 recipes, cluster 1 holds 5,681 and cluster 2 holds 920. The returned points and centroids are converted back to grams, while inertia stays as the sum of squared distances in the standardized space.</p><p class="muted">Cluster numbers carry no dietary meaning. This is exploratory grouping, and a single initialisation is not guaranteed to be globally optimal. Undefined values in the correlation matrix are encoded as null.</p></section>
+<section><h2>06 / Tests and Evidence</h2><pre>$ .venv311/bin/python --version
+Python 3.11.18
+
+$ python -m pytest -q
+............................................ [100%]
+44 passed in 0.49s
+
+$ python -m flake8 . --exclude=.venv,.venv311
+Exit code 0 &mdash; no findings
+
+$ func start --port 7071
+Core Tools Version:       4.16.0
+Functions: clusters / health / insights / recipes  [GET] http://localhost:7071/api/...
+
+$ python verify_http.py
+PASS 200 GET /api/health
+PASS 200 GET /api/insights
+PASS 200 GET /api/recipes?diet_type=keto&amp;search=chicken&amp;page=1&amp;limit=5
+PASS 200 GET /api/recipes?diet_type=keto&amp;search=chicken&amp;page=2&amp;limit=5
+PASS 200 GET /api/recipes?search=stage1-no-match-000000
+PASS 200 GET /api/clusters?k=3
+PASS 400 GET /api/clusters?k=0
+PASS 400 GET /api/clusters?k=11
+PASS 400 GET /api/recipes?page=0
+PASS 404 GET /api/recipes?diet_type=nonexistent
+PASS payload assertions and local CORS; evidence: docs/http-results.json</pre><p>The tests cover cleaning and imputation, the aggregations, endpoint output, filtering and paging, literal search, constant columns in the correlation matrix, k-means reproducibility and grouping, invalid k, local CSV cache refresh, and the error responses.</p><p>The actual Azure Functions handlers were also called against the full CSV: all four return status 200, and both the insights total and the clusters point count are 7,806. On top of that, <code>verify_http.py</code> sends ten real HTTP requests through the running Functions host and asserts each one: the success paths, that pages 1 and 2 differ, the empty search result, 400 for an invalid k and an invalid page, 404 for an unknown diet type, and the <code>Access-Control-Allow-Origin: http://localhost:5500</code> response header.</p><p><a href="docs/verification.txt">Verification record</a> &middot; <a href="docs/api-results.json">In-process API results (JSON)</a> &middot; <a href="docs/http-results.json">Real HTTP results (JSON)</a> &middot; <a href="README.md">Run instructions and API reference</a></p><div class="note">Verification environment: macOS (arm64), Python 3.11.18 (the version the team's project already uses), the isolated <code>.venv311</code> virtual environment, Azure Functions Core Tools 4.16.0 and Functions Runtime 4.1054.250.26428. Local host compatibility was confirmed in that environment.</div></section>
+<section id="stage1-evidence"><h2>Stage 1 Local-Run Screenshots (2026-11-04)</h2><p>The seven images below are the actual run evidence on Python 3.11 with Core Tools 4.16.0. Every one was taken with the macOS <code>screencapture</code> tool from a real window on screen: the browser images are Google Chrome windows with the address bar visible, running in a separate empty profile so no personal browsing data appears, and the terminal images are real command output in Terminal.app windows. The images are embedded, so this HTML can be sent on its own.</p><figure><img src="data:image/png;base64,<...>" alt="S1 cli-pytest-flake8.png"><figcaption>Figure S1 &mdash; All 44 pytest tests pass and flake8 exits 0 on Python 3.11. (<code>docs/screenshots/cli-pytest-flake8.png</code>)</figcaption></figure><figure><img src="data:image/png;base64,<...>" alt="S2 cli-func-start.png"><figcaption>Figure S2 &mdash; <code>func start</code> brings up the local Functions host; the clusters, health, insights and recipes GET routes are all registered. (<code>docs/screenshots/cli-func-start.png</code>)</figcaption></figure><figure><img src="data:image/png;base64,<...>" alt="S3 cli-http-verification.png"><figcaption>Figure S3 &mdash; Ten real HTTP requests through the running host, including the 400 / 404 paths and the local CORS header, all pass. (<code>docs/screenshots/cli-http-verification.png</code>)</figcaption></figure><figure><img src="data:image/png;base64,<...>" alt="S4 api-health-browser.png"><figcaption>Figure S4 &mdash; Browser response from http://localhost:7071/api/health. (<code>docs/screenshots/api-health-browser.png</code>)</figcaption></figure><figure><img src="data:image/png;base64,<...>" alt="S5 api-insights-browser.png"><figcaption>Figure S5 &mdash; /api/insights in the browser: average macros per diet, the correlation matrix and the execution time. (<code>docs/screenshots/api-insights-browser.png</code>)</figcaption></figure><figure><img src="data:image/png;base64,<...>" alt="S6 api-recipes-browser.png"><figcaption>Figure S6 &mdash; /api/recipes?diet_type=keto&amp;search=chicken&amp;page=1&amp;limit=5 in the browser: filtering, search and the paging fields. (<code>docs/screenshots/api-recipes-browser.png</code>)</figcaption></figure><figure><img src="data:image/png;base64,<...>" alt="S7 api-clusters-browser.png"><figcaption>Figure S7 &mdash; /api/clusters?k=3 in the browser: cluster sizes, centroids and the scatter points from the hand-written k-means. (<code>docs/screenshots/api-clusters-browser.png</code>)</figcaption></figure></section>
+<section id="existing-evidence"><h2>Existing Screenshots and Cloud Evidence</h2><p>The images below are screenshots the project already held, each one checked against its source. They evidence the deployment and responses of the earlier three-endpoint backend; the new search, correlation and clusters features are evidenced by the Stage 1 record above. The images are embedded, so this HTML can be sent on its own.</p><figure><img src="data:image/png;base64,<...>" alt="Figure 1 - existing Azure Function App: Running, with the health, insights and recipes HTTP functions enabled."><figcaption>Figure 1 &middot; Existing Azure Function App: Running, with the health, insights and recipes HTTP functions enabled.<br>Source: Project2/docs/screenshots/portal-function-app.png</figcaption></figure><figure><img src="data:image/png;base64,<...>" alt="Figure 2 - existing health response: status=healthy, service version 2.0.0."><figcaption>Figure 2 &middot; Existing health response: status=healthy, service version 2.0.0.<br>Source: Project2/docs/screenshots/api-health-curl.png</figcaption></figure><figure><img src="data:image/png;base64,<...>" alt="Figure 3 - existing insights response: average macros for the five diet types and the highest-protein recipes."><figcaption>Figure 3 &middot; Existing insights response: average macros for the five diet types and the highest-protein recipes.<br>Source: Project2/docs/screenshots/api-insights-browser.png</figcaption></figure><figure><img src="data:image/png;base64,<...>" alt="Figure 4 - existing recipes response: 5 recipes, total 7,806 and the first page of results."><figcaption>Figure 4 &middot; Existing recipes response: 5 recipes, a total of 7,806 and the first page of results.<br>Source: Project2/docs/screenshots/api-recipes-response.png</figcaption></figure><figure><img src="data:image/png;base64,<...>" alt="Figure 5 - existing CORS and timing record: insights HTTP 200 on 2026-10-20, the measured duration and the allowed front-end origin."><figcaption>Figure 5 &middot; Existing CORS and timing record: insights HTTP 200 on 2026-10-20, the measured duration and the allowed front-end origin.<br>Source: Project2/docs/screenshots/cli-cors-and-timing.png</figcaption></figure></section>
+<section><h2>07 / Sample JSON Responses</h2><p class="muted">Click to expand. These are measured values; insights omits the extra statistics lists and clusters shows only the first two points. The complete payloads are in the JSON files linked above.</p><details><summary>GET /api/health &middot; live JSON response</summary><pre>{
+  &quot;status&quot;: &quot;healthy&quot;,
+  &quot;service&quot;: &quot;nutritional-insights-api&quot;,
+  &quot;version&quot;: &quot;2.0.0&quot;,
+  &quot;dataset_cached&quot;: false
+}</pre></details><details><summary>GET /api/insights &middot; live JSON response</summary><pre>{
+  &quot;average_macros&quot;: [
+    {
+      &quot;Diet_type&quot;: &quot;dash&quot;,
+      &quot;Protein(g)&quot;: 69.28,
+      &quot;Carbs(g)&quot;: 160.54,
+      &quot;Fat(g)&quot;: 101.15
+    },
+    {
+      &quot;Diet_type&quot;: &quot;keto&quot;,
+      &quot;Protein(g)&quot;: 101.27,
+      &quot;Carbs(g)&quot;: 57.97,
+      &quot;Fat(g)&quot;: 153.12
+    },
+    {
+      &quot;Diet_type&quot;: &quot;mediterranean&quot;,
+      &quot;Protein(g)&quot;: 101.11,
+      &quot;Carbs(g)&quot;: 152.91,
+      &quot;Fat(g)&quot;: 101.42
+    },
+    {
+      &quot;Diet_type&quot;: &quot;paleo&quot;,
+      &quot;Protein(g)&quot;: 88.67,
+      &quot;Carbs(g)&quot;: 129.55,
+      &quot;Fat(g)&quot;: 135.67
+    },
+    {
+      &quot;Diet_type&quot;: &quot;vegan&quot;,
+      &quot;Protein(g)&quot;: 56.16,
+      &quot;Carbs(g)&quot;: 254.0,
+      &quot;Fat(g)&quot;: 103.3
+    }
+  ],
+  &quot;correlation&quot;: {
+    &quot;Protein(g)&quot;: {
+      &quot;Protein(g)&quot;: 1.0,
+      &quot;Carbs(g)&quot;: 0.155682,
+      &quot;Fat(g)&quot;: 0.478012
+    },
+    &quot;Carbs(g)&quot;: {
+      &quot;Protein(g)&quot;: 0.155682,
+      &quot;Carbs(g)&quot;: 1.0,
+      &quot;Fat(g)&quot;: 0.269059
+    },
+    &quot;Fat(g)&quot;: {
+      &quot;Protein(g)&quot;: 0.478012,
+      &quot;Carbs(g)&quot;: 0.269059,
+      &quot;Fat(g)&quot;: 1.0
+    }
+  },
+  &quot;summary&quot;: {
+    &quot;total_recipes&quot;: 7806,
+    &quot;diet_types&quot;: [
+      &quot;dash&quot;,
+      &quot;keto&quot;,
+      &quot;mediterranean&quot;,
+      &quot;paleo&quot;,
+      &quot;vegan&quot;
+    ],
+    &quot;diet_counts&quot;: {
+      &quot;mediterranean&quot;: 1753,
+      &quot;dash&quot;: 1745,
+      &quot;vegan&quot;: 1522,
+      &quot;keto&quot;: 1512,
+      &quot;paleo&quot;: 1274
+    },
+    &quot;highest_mean_protein_diet&quot;: &quot;keto&quot;,
+    &quot;highest_mean_protein_g&quot;: 101.27,
+    &quot;highest_total_protein_diet&quot;: &quot;mediterranean&quot;,
+    &quot;highest_total_protein_g&quot;: 177249.89
+  },
+  &quot;metadata&quot;: {
+    &quot;execution_time_seconds&quot;: 0.027,
+    &quot;source&quot;: &quot;Local CSV&quot;,
+    &quot;dataset&quot;: &quot;All_Diets.csv&quot;,
+    &quot;dataset_from_cache&quot;: false
+  }
+}</pre></details><details><summary>GET /api/recipes &middot; live JSON response</summary><pre>{
+  &quot;recipes&quot;: [
+    {
+      &quot;Diet_type&quot;: &quot;keto&quot;,
+      &quot;Recipe_name&quot;: &quot;Keto Chicken Pot Pie Casserole Recipe&quot;,
+      &quot;Cuisine_type&quot;: &quot;american&quot;,
+      &quot;Protein(g)&quot;: 183.07,
+      &quot;Carbs(g)&quot;: 66.95,
+      &quot;Fat(g)&quot;: 330.43
+    },
+    {
+      &quot;Diet_type&quot;: &quot;keto&quot;,
+      &quot;Recipe_name&quot;: &quot;Keto Everything Bagel Chicken&quot;,
+      &quot;Cuisine_type&quot;: &quot;american&quot;,
+      &quot;Protein(g)&quot;: 214.84,
+      &quot;Carbs(g)&quot;: 17.29,
+      &quot;Fat(g)&quot;: 140.76
+    }
+  ],
+  &quot;count&quot;: 2,
+  &quot;total&quot;: 225,
+  &quot;page&quot;: 1,
+  &quot;limit&quot;: 2,
+  &quot;total_pages&quot;: 113,
+  &quot;diet_type_filter&quot;: &quot;keto&quot;,
+  &quot;search&quot;: &quot;chicken&quot;,
+  &quot;metadata&quot;: {
+    &quot;execution_time_seconds&quot;: 0.002,
+    &quot;source&quot;: &quot;Local CSV&quot;,
+    &quot;dataset&quot;: &quot;All_Diets.csv&quot;,
+    &quot;dataset_from_cache&quot;: true
+  }
+}</pre></details><details><summary>GET /api/clusters &middot; live JSON response</summary><pre>{
+  &quot;k&quot;: 3,
+  &quot;features&quot;: [
+    &quot;Protein(g)&quot;,
+    &quot;Carbs(g)&quot;,
+    &quot;Fat(g)&quot;
+  ],
+  &quot;standardized&quot;: true,
+  &quot;seed&quot;: 42,
+  &quot;iterations&quot;: 58,
+  &quot;inertia&quot;: 12825.275678703805,
+  &quot;cluster_counts&quot;: {
+    &quot;0&quot;: 1205,
+    &quot;1&quot;: 5681,
+    &quot;2&quot;: 920
+  },
+  &quot;centroids&quot;: [
+    {
+      &quot;cluster&quot;: 0,
+      &quot;Protein(g)&quot;: 228.09124481327768,
+      &quot;Carbs(g)&quot;: 119.31101244813274,
+      &quot;Fat(g)&quot;: 265.9383568464727
+    },
+    {
+      &quot;cluster&quot;: 1,
+      &quot;Protein(g)&quot;: 49.97187114944563,
+      &quot;Carbs(g)&quot;: 100.62553775743703,
+      &quot;Fat(g)&quot;: 75.44519978876957
+    },
+    {
+      &quot;cluster&quot;: 2,
+      &quot;Protein(g)&quot;: 98.87491304347826,
+      &quot;Carbs(g)&quot;: 513.0980000000006,
+      &quot;Fat(g)&quot;: 181.31163043478267
+    }
+  ],
+  &quot;points&quot;: [
+    {
+      &quot;Recipe_name&quot;: &quot;Bone Broth From &#x27;Nom Nom Paleo&#x27;&quot;,
+      &quot;Diet_type&quot;: &quot;paleo&quot;,
+      &quot;Protein(g)&quot;: 5.22,
+      &quot;Carbs(g)&quot;: 1.29,
+      &quot;Fat(g)&quot;: 3.2,
+      &quot;cluster&quot;: 1
+    },
+    {
+      &quot;Recipe_name&quot;: &quot;Paleo Effect Asian-Glazed Pork Sides, A Sweet &amp; Crispy Appetizer&quot;,
+      &quot;Diet_type&quot;: &quot;paleo&quot;,
+      &quot;Protein(g)&quot;: 181.55,
+      &quot;Carbs(g)&quot;: 28.62,
+      &quot;Fat(g)&quot;: 146.14,
+      &quot;cluster&quot;: 0
+    }
+  ],
+  &quot;metadata&quot;: {
+    &quot;execution_time_seconds&quot;: 0.026,
+    &quot;source&quot;: &quot;Local CSV&quot;,
+    &quot;dataset&quot;: &quot;All_Diets.csv&quot;,
+    &quot;dataset_from_cache&quot;: true
+  }
+}</pre></details></section>
+<section><h2>08 / Run, Demo and Submission Checklist</h2><pre>cd Project2/stage1
+python3.11 -m venv .venv311
+source .venv311/bin/activate
+python -m pip install -r requirements-dev.txt
+cp local.settings.json.example local.settings.json
+python -m pytest -q
+python -m flake8 . --exclude=.venv,.venv311
+func start --port 7071
+# in a second terminal:
+python verify_http.py</pre><p class="muted">The last two commands need Azure Functions Core Tools v4 (<code>npm i -g azure-functions-core-tools@4</code>). No cloud account or key is required for any endpoint.</p><ol><li>pytest all green and flake8 clean &mdash; done, see Figure S1.</li><li>Start the Functions host and open /api/health and /api/insights &mdash; done, see Figures S2, S4 and S5.</li><li>/api/recipes?diet_type=keto&amp;search=chicken&amp;page=1&amp;limit=5 for filtering, search and paging &mdash; done, see Figure S6; verify_http.py asserts that page 2 differs from page 1.</li><li>/api/clusters?k=3 for cluster sizes, centroids and points &mdash; done, see Figure S7.</li><li>The code is committed and merged to main, and the API contract is handed to Person 2; Person 3 takes on Blob Storage, cloud deployment and the final report.</li></ol><div class="note"><strong>Group submission:</strong> working Azure back-end and front-end links, the GitHub repository, a PDF/Word document with screenshots covering each rubric row, and a roughly 10-minute video featuring every member. The project already holds cloud deployment screenshots and the group report; this round did not re-check whether the remote services are still online, and Stage 1 did its verification locally without any cloud release or configuration change. This HTML is the Stage 1 summary and can be printed to PDF and folded into the group report.</div></section>
+<footer>Sources: Project2/division.md, spec/submission-requirements.md, the existing backend and tests, and the Stage 1 measurements taken here. The original deployment folder is unchanged, and the existing deploy.sh still targets backend/.</footer></main></body></html>
