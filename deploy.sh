@@ -11,7 +11,7 @@ if [ -f "$STATE" ]; then source "$STATE"; else
   echo "SUFFIX=$SUFFIX" > "$STATE"
 fi
 
-RG=diet-analysis-rg
+RG=${RG:-diet-analysis-rg}
 LOC=centralus
 SWA_LOC=centralus
 STORAGE=dietstore$SUFFIX
